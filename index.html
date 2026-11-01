@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Онгоц буудах</title>
+<meta name="description" content="Дэвтрийн Онгоц буудах тоглоом: онлайнаар найзтайгаа, нэг төхөөрөмж дээр хоёулаа, эсвэл компьютерийн эсрэг.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%E2%9C%88%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=PT+Mono&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: a school-notebook page; one column on phones, the two boards side by side on wide screens */
+:root{
+  --paper:#f3f6fb; --gridfaint:rgba(80,120,190,.10); --grid:#cbd8ec; --card:#ffffff;
+  --ink:#1b2952; --ink-soft:#5b6789; --accent:#2b56c9; --plane:#c9d7f6;
+  --hit:#d2302a; --hit-soft:#f6d3d0; --ok:#1d8757; --shade:rgba(43,86,201,.12);
+  --f-hand:"Caveat","Segoe Print","Comic Sans MS",cursive;
+  --f-body:"PT Sans","Segoe UI",Arial,sans-serif;
+  --f-mono:"PT Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0d172c; --gridfaint:rgba(120,160,240,.07); --grid:#243a60; --card:#12203d;
+  --ink:#e3eaf8; --ink-soft:#97a6c6; --accent:#86a8ff; --plane:#2a4580;
+  --hit:#ff6b60; --hit-soft:#4a2230; --ok:#52c896; --shade:rgba(134,168,255,.15); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0d172c; --gridfaint:rgba(120,160,240,.07); --grid:#243a60; --card:#12203d;
+  --ink:#e3eaf8; --ink-soft:#97a6c6; --accent:#86a8ff; --plane:#2a4580;
+  --hit:#ff6b60; --hit-soft:#4a2230; --ok:#52c896; --shade:rgba(134,168,255,.15); color-scheme:dark}
+
+[hidden]{display:none!important}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--f-body);
+  background-image:linear-gradient(var(--gridfaint) 1px,transparent 1px),linear-gradient(90deg,var(--gridfaint) 1px,transparent 1px);
+  background-size:22px 22px}
+.app{max-width:980px;margin:0 auto;padding-block:20px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+h1{font:700 clamp(40px,8vw,58px)/1 var(--f-hand);margin:0;color:var(--accent);letter-spacing:.5px}
+h1 small{display:block;font:400 15px/1.4 var(--f-body);color:var(--ink-soft);letter-spacing:0;margin-top:4px}
+h2{font:700 30px/1.1 var(--f-hand);margin:0;color:var(--ink)}
+h3{font:700 13px/1.2 var(--f-body);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin:0}
+p{margin:0}
+button{font:inherit;color:inherit}
+.btn{border:2px solid var(--ink);background:var(--card);border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;min-height:44px}
+.btn:hover{background:var(--shade)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--card)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--ink-soft)}
+.btn:focus-visible,.cell:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--ink-soft)}
+
+/* home */
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:28px}
+.mode{border:2px solid var(--ink);border-radius:14px;background:var(--card);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.mode p{color:var(--ink-soft);font-size:15px;flex:1}
+.mode .tag{font:700 22px/1 var(--f-hand);color:var(--accent)}
+input[type=text]{font:inherit;border:2px solid var(--grid);background:var(--paper);color:var(--ink);border-radius:8px;padding:9px 10px;min-height:44px;width:100%;min-width:0}
+.joinrow{display:flex;gap:8px}
+.joinrow input{text-transform:uppercase;font-family:var(--f-mono);letter-spacing:.15em}
+.rules{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:start;border-top:2px dashed var(--grid);padding-top:22px}
+.rules ol{margin:10px 0 0;padding-left:22px;display:grid;gap:6px;max-width:62ch}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:15px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.mini{display:grid;grid-template-columns:repeat(5,26px);grid-auto-rows:26px;border:2px solid var(--ink);background:var(--card)}
+.mini div{border-right:1px solid var(--grid);border-bottom:1px solid var(--grid)}
+.mini .p{background:var(--plane)} .mini .hd{background:var(--accent)}
+.minicap{font:600 20px/1.2 var(--f-hand);color:var(--ink-soft);text-align:center;margin-top:6px}
+
+/* boards */
+.board{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));grid-template-rows:repeat(11,minmax(0,1fr));
+  width:100%;max-width:440px;aspect-ratio:1;border:2px solid var(--ink);background:var(--card);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.lab{display:flex;align-items:center;justify-content:center;font:clamp(11px,2.6vw,14px)/1 var(--f-mono);color:var(--ink-soft);
+  border-right:1px solid var(--grid);border-bottom:1px solid var(--grid);background:var(--paper)}
+.cell{border:0;padding:0;margin:0;background:transparent;border-right:1px solid var(--grid);border-bottom:1px solid var(--grid);
+  display:flex;align-items:center;justify-content:center;font:700 clamp(13px,3.6vw,20px)/1 var(--f-body);color:var(--ink);min-width:0;min-height:0}
+.cell.click{cursor:crosshair}
+.cell.click:hover{background:var(--shade)}
+.cell.plane{background:var(--plane)}
+.cell.head{background:var(--accent);color:var(--card)}
+.cell.ghost{background:repeating-linear-gradient(45deg,var(--plane) 0 4px,transparent 4px 8px)}
+.cell.dead{background:var(--hit-soft)}
+.cell.m{color:var(--ink-soft)}
+.cell.h{color:var(--hit)}
+.cell.k{color:var(--hit)}
+.cell.k span{display:flex;align-items:center;justify-content:center;width:82%;height:82%;border:2.5px solid var(--hit);border-radius:50%}
+.cell.head.h,.cell.head.k{color:var(--card)}
+.cell.head.k span{border-color:var(--card)}
+.cell.pv-ok{background:color-mix(in srgb,var(--ok) 35%,transparent)}
+.cell.pv-bad{background:color-mix(in srgb,var(--hit) 30%,transparent)}
+.cell.last{box-shadow:inset 0 0 0 2px var(--hit)}
+.cell.pend{color:var(--ink-soft);font-size:12px}
+
+/* setup */
+.setup{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:24px;align-items:start}
+.panel{display:flex;flex-direction:column;gap:14px;min-width:0}
+.count{font:700 26px/1 var(--f-hand)}
+.codebox{border:2px dashed var(--accent);border-radius:12px;padding:12px 14px;background:var(--card)}
+.code{font:700 34px/1.1 var(--f-mono);letter-spacing:.2em;color:var(--accent)}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:14px;font-weight:700;background:var(--shade);color:var(--ink)}
+.pill.ok{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok)}
+.pill.warn{background:color-mix(in srgb,var(--hit) 15%,transparent);color:var(--hit)}
+
+/* play */
+.status{border:2px solid var(--ink);border-radius:12px;background:var(--card);padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.status .big{font:700 30px/1.1 var(--f-hand)}
+.status.your{border-color:var(--accent)}
+.status.your .big{color:var(--accent)}
+.status.win .big{color:var(--ok)} .status.lose .big{color:var(--hit)}
+.score{display:flex;gap:14px;font-size:15px;flex-wrap:wrap}
+.score b{font-family:var(--f-mono)}
+.boards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.bwrap{display:flex;flex-direction:column;gap:8px;min-width:0}
+.bwrap .row{justify-content:space-between}
+.log{margin-top:18px;display:grid;gap:4px;font-size:15px}
+.log div{font-family:var(--f-mono)}
+.log .who{color:var(--ink-soft)}
+.flash{font:700 22px/1 var(--f-hand)}
+.flash.m{color:var(--ink-soft)} .flash.h{color:var(--hit)} .flash.k{color:var(--hit)}
+
+/* curtain */
+.curtain{position:fixed;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;z-index:20;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.curtain .inner{max-width:420px;text-align:center;display:flex;flex-direction:column;gap:16px;align-items:center}
+.curtain h2{font-size:42px;color:var(--accent)}
+
+@media (max-width:760px){
+  .setup,.boards,.rules{grid-template-columns:minmax(0,1fr)}
+  .board{margin:0 auto}
+}
+@media (prefers-reduced-motion:no-preference){
+  .cell.k span,.flash{animation:pop .35s ease-out}
+  @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Онгоц буудах<small>Дэвтрийн торон дээрх алдарт тоглоом, одоо дэлгэц дээр</small></h1>
+    <button class="btn ghost" id="homeBtn" hidden>← Нүүр хуудас</button>
+  </header>
+
+  <!-- HOME -->
+  <section id="home">
+    <div class="modes">
+      <div class="mode">
+        <div class="tag">Онлайн, найзтайгаа</div>
+        <p>Тус тусын утас, компьютерээс тоглоно. Нэг нь тоглоом үүсгээд кодоо хэлнэ, нөгөө нь кодоор нэгдэнэ.</p>
+        <label for="nick" class="muted" style="font-size:14px">Таны нэр</label>
+        <input type="text" id="nick" maxlength="16" placeholder="Жишээ нь: Болд">
+        <button class="btn primary" id="createBtn">Тоглоом үүсгэх</button>
+        <div class="joinrow">
+          <input type="text" id="joinCode" maxlength="4" placeholder="КОД" aria-label="Тоглоомын код" autocomplete="off">
+          <button class="btn" id="joinBtn">Нэгдэх</button>
+        </div>
+        <button class="btn" id="resumeBtn" hidden>Үргэлжлүүлэх</button>
+        <p id="netNote" class="muted" style="font-size:13px">Холболт шалгаж байна…</p>
+      </div>
+      <div class="mode">
+        <div class="tag">Нэг төхөөрөмж дээр 2 хүн</div>
+        <p>Нэг утас эсвэл компьютерийг ээлжлэн дамжуулна. Ээлж солигдох бүрт дэлгэц хаагдаж, нөгөөдөө онгоцоо харуулахгүй.</p>
+        <button class="btn" id="hotBtn">Эхлэх</button>
+      </div>
+      <div class="mode">
+        <div class="tag">Компьютерийн эсрэг</div>
+        <p>Ганцаараа дасгал хийх. Компьютер өөрийн онгоцнуудыг нууж байрлуулаад тантай ээлжлэн буудна.</p>
+        <button class="btn" id="aiBtn">Эхлэх</button>
+      </div>
+    </div>
+
+    <div class="rules">
+      <div>
+        <h2>Дүрэм</h2>
+        <ol>
+          <li>Талбай 10×10 нүдтэй. Нүд бүр <b>Г4</b>, <b>Ж8</b> гэх мэт кодтой.</li>
+          <li>Хүн бүр 10 нүдтэй <b>3 онгоц</b> нууж байрлуулна. Онгоцыг 4 чиглэлд эргүүлж болно, давхцуулж болохгүй.</li>
+          <li>Ээлжлэн нэг нүд буудна. Онгоцгүй бол <b>Хоосон</b>, онгоцны биеийг оновол <b>Оносон</b>.</li>
+          <li>Онгоцны <b>толгойг</b> оновол онгоц бүхэлдээ <b>Унасан</b>.</li>
+          <li>Өрсөлдөгчийнхөө 3 онгоцыг түрүүлж унагасан нь хожно.</li>
+        </ol>
+        <div class="legend">
+          <span><b class="muted">•</b> Хоосон</span>
+          <span><b style="color:var(--hit)">✕</b> Оносон</span>
+          <span><b style="color:var(--hit)">⊗</b> Унасан (толгой)</span>
+        </div>
+      </div>
+      <div>
+        <div class="mini" aria-label="Онгоцны хэлбэр">
+          <div></div><div></div><div class="hd"></div><div></div><div></div>
+          <div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div><div class="p"></div>
+          <div></div><div></div><div class="p"></div><div></div><div></div>
+          <div></div><div class="p"></div><div class="p"></div><div class="p"></div><div></div>
+        </div>
+        <div class="minicap">толгой · далавч · бие · сүүл</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section id="setup" hidden>
+    <div class="setup">
+      <div class="board" id="setupBoard"></div>
+      <div class="panel">
+        <h2 id="setupTitle">Онгоцоо байрлуул</h2>
+        <p class="muted" id="setupHint">Нүдэн дээр дарахад онгоцны толгой тэнд байрлана. Байрлуулсан онгоцон дээр дахин дарвал арилна.</p>
+        <div class="count" id="setupCount">0 / 3 онгоц</div>
+        <div class="row">
+          <button class="btn" id="rotBtn">Эргүүлэх ↑</button>
+          <button class="btn" id="rndBtn">Санамсаргүй</button>
+          <button class="btn ghost" id="clrBtn">Цэвэрлэх</button>
+        </div>
+        <button class="btn primary" id="readyBtn" disabled>Бэлэн</button>
+        <div id="netPanel" hidden class="panel">
+          <div class="codebox">
+            <h3>Тоглоомын код</h3>
+            <div class="code" id="codeShow">----</div>
+            <p class="muted" style="font-size:14px">Энэ кодыг найздаа хэлээрэй. Тэр энэ хуудсыг нээгээд кодоор нэгдэнэ.</p>
+          </div>
+          <div class="row"><span class="muted">Өрсөлдөгч:</span><span class="pill" id="oppPill">Хүлээж байна…</span></div>
+          <p class="muted" id="connNote" style="font-size:14px"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAY -->
+  <section id="play" hidden>
+    <div class="status" id="status">
+      <div><div class="big" id="statusBig"></div><div class="muted" id="statusSmall"></div></div>
+      <div class="score" id="score"></div>
+    </div>
+    <div class="boards">
+      <div class="bwrap">
+        <div class="row"><h3 id="enemyTitle">Дайсны талбай</h3><span class="muted" style="font-size:14px">Энд буудна</span></div>
+        <div class="board" id="enemyBoard"></div>
+      </div>
+      <div class="bwrap">
+        <div class="row"><h3 id="myTitle">Миний талбай</h3></div>
+        <div class="board" id="myBoard"></div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:16px" id="overRow" hidden>
+      <button class="btn primary" id="againBtn">Дахин тоглох</button>
+    </div>
+    <div class="log" id="log"></div>
+  </section>
+</div>
+
+<div class="curtain" id="curtain" hidden>
+  <div class="inner">
+    <h2 id="curtainTitle"></h2>
+    <p class="muted" id="curtainText"></p>
+    <button class="btn primary" id="curtainBtn">Бэлэн, үргэлжлүүлэх</button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const LET=['А','Б','В','Г','Д','Е','Ж','З','И','К'];
+const N=10;
+const cname=i=>LET[i%N]+(Math.floor(i/N)+1);
+const WORD={m:'Хоосон',h:'Оносон',k:'Унасан!'};
+const ARROW=['↑','→','↓','←'];
+// plane drawn nose-up: head, wings(5), body, tail(3)
+const BASE=[[0,0],[1,-2],[1,-1],[1,0],[1,1],[1,2],[2,0],[3,-1],[3,0],[3,1]];
+function rot(o,d){let r=o[0],c=o[1];for(let i=0;i<d;i++){const t=r;r=c;c=-t;}return [r,c];}
+function planeCells(h,d){const r0=Math.floor(h/N),c0=h%N,out=[];
+  for(const o of BASE){const [dr,dc]=rot(o,d);const r=r0+dr,c=c0+dc;if(r<0||r>=N||c<0||c>=N)return null;out.push(r*N+c);}return out;}
+const ALL=[];for(let h=0;h<100;h++)for(let d=0;d<4;d++){const cells=planeCells(h,d);if(cells)ALL.push({h,d,cells});}
+function occMap(planes){const m=new Map();planes.forEach((p,pi)=>{const cs=planeCells(p.h,p.d)||[];cs.forEach((c,k)=>m.set(c,{pi,head:k===0}));});return m;}
+function canPlace(planes,h,d){const cs=planeCells(h,d);if(!cs)return false;const o=occMap(planes);return cs.every(c=>!o.has(c));}
+function randomPlanes(){for(let t=0;t<200;t++){const ps=[];const pool=ALL.slice().sort(()=>Math.random()-.5);
+  for(const p of pool){if(canPlace(ps,p.h,p.d))ps.push({h:p.h,d:p.d});if(ps.length===3)return ps;}}return [];}
+function answer(planes,c){const o=occMap(planes).get(c);return !o?'m':(o.head?'k':'h');}
+function esc(s){return String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+
+/* ---------- board drawing ---------- */
+function drawBoard(el,getCell){
+  let h='<div class="lab"></div>'+LET.map(l=>'<div class="lab">'+l+'</div>').join('');
+  for(let r=0;r<N;r++){h+='<div class="lab">'+(r+1)+'</div>';
+    for(let c=0;c<N;c++){const i=r*N+c;const x=getCell(i)||{};
+      const cls='cell'+(x.cls||'')+(x.click?' click':'');
+      h+='<button type="button" class="'+cls+'" data-i="'+i+'"'+(x.click?'':' tabindex="-1"')+' aria-label="'+cname(i)+(x.label?' '+x.label:'')+'">'+(x.mark||'')+'</button>';}}
+  el.innerHTML=h;
+}
+function bindBoard(el){
+  el.addEventListener('click',e=>{const b=e.target.closest('.cell');if(b&&b.classList.contains('click')&&el._click)el._click(+b.dataset.i);});
+  el.addEventListener('pointerover',e=>{const b=e.target.closest('.cell');if(b&&el._hover)el._hover(+b.dataset.i);});
+  el.addEventListener('pointerleave',()=>{if(el._hover)el._hover(-1);});
+}
+const setupBoard=$('#setupBoard'),enemyBoard=$('#enemyBoard'),myBoard=$('#myBoard');
+[setupBoard,enemyBoard,myBoard].forEach(bindBoard);
+const MARK={m:'•',h:'✕',k:'<span>✕</span>',p:'…'};
+
+/* ---------- screens ---------- */
+function show(id){['home','setup','play'].forEach(s=>{$('#'+s).hidden=s!==id;});$('#homeBtn').hidden=id==='home';}
+function curtain(title,text,btn,cb){$('#curtainTitle').textContent=title;$('#curtainText').textContent=text;$('#curtainBtn').textContent=btn||'Бэлэн, үргэлжлүүлэх';
+  $('#curtain').hidden=false;$('#curtainBtn').onclick=()=>{$('#curtain').hidden=true;cb&&cb();};$('#curtainBtn').focus();}
+
+/* ---------- setup ---------- */
+let S=null; // {planes,dir,hover,locked,done}
+function startSetup(opts){S={planes:opts.planes||[],dir:0,hover:-1,locked:!!opts.locked,done:opts.done,title:opts.title};
+  $('#setupTitle').textContent=opts.title||'Онгоцоо байрлуул';$('#netPanel').hidden=!opts.net;show('setup');renderSetup();}
+function renderSetup(){
+  const occ=occMap(S.planes);let pv=null,ok=false;
+  if(!S.locked&&S.hover>=0&&!occ.has(S.hover)&&S.planes.length<3){pv=planeCells(S.hover,S.dir);ok=!!pv&&pv.every(c=>!occ.has(c));}
+  const pvSet=pv?new Set(pv):null;
+  drawBoard(setupBoard,i=>{let cls='';const o=occ.get(i);if(o)cls+=o.head?' head':' plane';
+    if(pvSet&&pvSet.has(i))cls+=ok?' pv-ok':' pv-bad';else if(!S.locked&&S.hover===i&&!pv&&!o&&S.planes.length<3)cls+=' pv-bad';
+    return {cls,click:!S.locked};});
+  $('#setupCount').textContent=S.planes.length+' / 3 онгоц';
+  $('#rotBtn').textContent='Эргүүлэх '+ARROW[S.dir];
+  ['rotBtn','rndBtn','clrBtn'].forEach(id=>$('#'+id).disabled=S.locked);
+  $('#readyBtn').disabled=S.locked||S.planes.length<3;
+  $('#readyBtn').textContent=S.locked?'Бэлэн боллоо':'Бэлэн';
+  $('#setupHint').textContent=S.locked?'Онгоцнууд байрлалдаа түгжигдлээ.':'Нүдэн дээр дарахад онгоцны толгой тэнд байрлана. Байрлуулсан онгоцон дээр дахин дарвал арилна. (R товч = эргүүлэх)';
+}
+setupBoard._click=i=>{if(!S||S.locked)return;const o=occMap(S.planes).get(i);
+  if(o){S.planes.splice(o.pi,1);}else if(S.planes.length<3&&canPlace(S.planes,i,S.dir)){S.planes.push({h:i,d:S.dir});}
+  S.onChange&&S.onChange();renderSetup();};
+setupBoard._hover=i=>{if(!S||S.hover===i)return;S.hover=i;renderSetup();};
+$('#rotBtn').onclick=()=>{S.dir=(S.dir+1)%4;renderSetup();};
+document.addEventListener('keydown',e=>{if(!$('#setup').hidden&&S&&!S.locked&&(e.key==='r'||e.key==='R'||e.key==='к'||e.key==='К')){S.dir=(S.dir+1)%4;renderSetup();}});
+$('#rndBtn').onclick=()=>{S.planes.splice(0,S.planes.length,...randomPlanes());S.onChange&&S.onChange();renderSetup();};
+$('#clrBtn').onclick=()=>{S.planes.splice(0);S.onChange&&S.onChange();renderSetup();};
+$('#readyBtn').onclick=()=>{if(S.planes.length===3&&S.done)S.done(S.planes.slice());};
+
+/* ---------- local game (AI / same device) ---------- */
+let G=null;
+function mkP(name){return {name,planes:[],shots:[],res:{}};}
+function startAI(){stopNet();G={mode:'ai',P:[mkP('Та'),mkP('Компьютер')],turn:0,over:-1,lock:false,last:null};
+  startSetup({title:'Онгоцоо байрлуул',done:pl=>{G.P[0].planes=pl;G.P[1].planes=randomPlanes();show('play');renderPlay();}});}
+function startHot(){stopNet();G={mode:'hot',P:[mkP('1-р тоглогч'),mkP('2-р тоглогч')],turn:0,over:-1,lock:false,last:null};
+  curtain('1-р тоглогч','Онгоцоо нууж байрлуулна. 2-р тоглогч дэлгэц рүү бүү хар!','Эхлэх',()=>{
+    startSetup({title:'1-р тоглогч: онгоцоо байрлуул',done:pl=>{G.P[0].planes=pl;
+      curtain('2-р тоглогч','Одоо таны ээлж. 1-р тоглогч дэлгэц рүү бүү хар!','Эхлэх',()=>{
+        startSetup({title:'2-р тоглогч: онгоцоо байрлуул',done:pl2=>{G.P[1].planes=pl2;
+          curtain('1-р тоглогчийн ээлж','Төхөөрөмжийг 1-р тоглогчид өгнө үү.','Буудаж эхлэх',()=>{show('play');renderPlay();});}});});}});});}
+function localShoot(sh,c){const P=G.P[sh],O=G.P[1-sh];if(P.shots.includes(c))return null;
+  const r=answer(O.planes,c);P.shots.push(c);P.res[c]=r;G.last={sh,c,r};
+  const kills=P.shots.filter(x=>P.res[x]==='k').length;if(kills>=3)G.over=sh;return r;}
+function kills(P){return P.shots.filter(x=>P.res[x]==='k').length;}
+
+function aiPick(){const P=G.P[1],res=P.res,shot=new Set(P.shots);
+  const deadCells=new Set();G.P[0].planes.forEach(p=>{if(shot.has(p.h))(planeCells(p.h,p.d)||[]).forEach(c=>deadCells.add(c));});
+  const score=new Array(100).fill(0);
+  for(const p of ALL){if(shot.has(p.h))continue;let bad=false,cover=0;
+    for(const c of p.cells){if(deadCells.has(c)||res[c]==='m'||res[c]==='k'){bad=true;break;}if(res[c]==='h')cover++;}
+    if(bad)continue;score[p.h]+=Math.pow(25,cover);}
+  let best=[],mx=-1;for(let i=0;i<100;i++){if(shot.has(i))continue;if(score[i]>mx){mx=score[i];best=[i];}else if(score[i]===mx)best.push(i);}
+  if(mx<=4){const cand=[];for(let i=0;i<100;i++)if(!shot.has(i)&&score[i]>0)cand.push(i);
+    if(cand.length)return cand[Math.floor(Math.random()*cand.length)];}
+  if(best.length)return best[Math.floor(Math.random()*best.length)];
+  for(let i=0;i<100;i++)if(!shot.has(i))return i;return 0;}
+
+function onEnemyClick(c){
+  if(NET.on){netShoot(c);return;}
+  if(!G||G.over>=0||G.lock)return;const v=G.mode==='hot'?G.turn:0;if(G.turn!==v)return;
+  const r=localShoot(v,c);if(!r)return;
+  if(G.over>=0){renderPlay();return;}
+  if(G.mode==='ai'){G.turn=1;G.lock=true;renderPlay();
+    setTimeout(()=>{const t=aiPick();localShoot(1,t);G.turn=0;G.lock=false;renderPlay();},900);}
+  else{G.lock=true;renderPlay();
+    setTimeout(()=>{G.turn=1-G.turn;G.lock=false;G.last=null;
+      curtain(G.P[G.turn].name+'ийн ээлж','Төхөөрөмжийг '+G.P[G.turn].name.replace('тоглогч','тоглогчид')+' өгнө үү. Нөгөө тоглогч бүү хар!','Бэлэн',()=>renderPlay());},1400);}
+}
+enemyBoard._click=onEnemyClick;
+
+/* ---------- view model + render for play ---------- */
+function vmLocal(){
+  const v=G.mode==='hot'?G.turn:0,me=G.P[v],op=G.P[1-v];
+  const enemy={};me.shots.forEach(c=>enemy[c]=me.res[c]);
+  const mine={};op.shots.forEach(c=>mine[c]=op.res[c]);
+  const dead=op.planes.filter(p=>me.shots.includes(p.h)).map(p=>planeCells(p.h,p.d));
+  const reveal=G.over>=0?op.planes.map(p=>planeCells(p.h,p.d)):[];
+  const log=[];const n=Math.max(G.P[0].shots.length,G.P[1].shots.length);
+  for(let k=0;k<n;k++)for(const s of [0,1]){const c=G.P[s].shots[k];if(c!==undefined)log.push({who:G.P[s].name,c,r:G.P[s].res[c]});}
+  let big,small='',cls='';
+  if(G.over>=0){if(G.mode==='ai'){big=G.over===0?'Та яллаа!':'Компьютер яллаа';cls=G.over===0?'win':'lose';}else{big=G.P[G.over].name+' яллаа!';cls='win';}
+    small='Бүх 3 онгоц унав.';}
+  else if(G.mode==='ai'){if(G.turn===0&&!G.lock){big='Таны ээлж';small='Дайсны талбайгаас нэг нүд сонгоно уу.';cls='your';}else{big='Компьютер бодож байна…';}}
+  else{big=me.name+'ийн ээлж';small=G.lock?'Ээлж солигдож байна…':'Дайсны талбайгаас нэг нүд сонгоно уу.';cls='your';}
+  return {enemy,mine,dead,reveal,myPlanes:me.planes,canShoot:G.over<0&&!G.lock&&G.turn===v,big,small,cls,
+    myKills:kills(me),oppKills:kills(op),meName:G.mode==='ai'?'Та':me.name,opName:op.name,
+    enemyTitle:G.mode==='hot'?op.name+'ийн талбай':'Компьютерийн талбай',myTitle:G.mode==='hot'?me.name+'ийн талбай':'Миний талбай',
+    last:G.last,log,over:G.over>=0};
+}
+function renderPlay(){
+  const vm=NET.on?vmNet():vmLocal();if(!vm)return;
+  const st=$('#status');st.className='status '+(vm.cls||'');
+  $('#statusBig').textContent=vm.big;$('#statusSmall').textContent=vm.small;
+  $('#score').innerHTML='<span>'+esc(vm.meName)+' унагасан: <b>'+vm.myKills+'/3</b></span><span>'+esc(vm.opName)+' унагасан: <b>'+vm.oppKills+'/3</b></span>';
+  $('#enemyTitle').textContent=vm.enemyTitle;$('#myTitle').textContent=vm.myTitle;
+  const deadSet=new Set(),deadHead=new Set();vm.dead.forEach(cs=>{if(cs){cs.forEach(c=>deadSet.add(c));deadHead.add(cs[0]);}});
+  const revSet=new Set();vm.reveal.forEach(cs=>cs&&cs.forEach(c=>revSet.add(c)));
+  drawBoard(enemyBoard,i=>{const r=vm.enemy[i];let cls='';
+    if(deadSet.has(i))cls+=' dead';else if(revSet.has(i))cls+=' ghost';
+    if(r)cls+=' '+r;if(vm.last&&vm.last.mine&&vm.last.c===i)cls+=' last';
+    return {cls,mark:r?MARK[r]:'',click:vm.canShoot&&!r,label:r&&r!=='p'?WORD[r]:''};});
+  const occ=occMap(vm.myPlanes);
+  drawBoard(myBoard,i=>{const o=occ.get(i),r=vm.mine[i];let cls='';if(o)cls+=o.head?' head':' plane';if(r)cls+=' '+r;
+    if(vm.last&&!vm.last.mine&&vm.last.c===i)cls+=' last';return {cls,mark:r?MARK[r]:'',label:r?WORD[r]:''};});
+  $('#overRow').hidden=!vm.over;
+  const lg=vm.log.slice(-6).reverse();
+  $('#log').innerHTML=lg.length?'<h3>Сүүлийн буудлагууд</h3>'+lg.map((e,k)=>'<div'+(k===0?' class="flash '+(e.r||'')+'"':'')+'><span class="who">'+esc(e.who)+':</span> '+cname(e.c)+' — '+(e.r&&e.r!=='p'?WORD[e.r]:'хариу хүлээж байна')+'</div>').join(''):'';
+}
+$('#againBtn').onclick=()=>{if(NET.on){leaveNet(true);show('home');refreshHome();}else if(G&&G.mode==='ai')startAI();else startHot();};
+
+/* ---------- online (PeerJS, direct peer-to-peer) ---------- */
+const NET={on:false,code:'',seat:1,nick:'',planes:[],shots:[],ready:false};
+let roomNS=null,lastPushed='',netAvailable=null;
+let peer=null,conn=null,oppPresence=null,oppOnline=false,retryT=null;
+const PREFIX='ongots-buudah-v1-';
+const NETKEY='plane-battle-web-v1';
+function saveNet(){const v=JSON.stringify({code:NET.code,seat:NET.seat,nick:NET.nick,planes:NET.planes,shots:NET.shots,ready:NET.ready});try{sessionStorage.setItem(NETKEY,v);}catch(e){}try{localStorage.setItem(NETKEY,v);}catch(e){}}
+function loadNet(){let raw=null;try{raw=sessionStorage.getItem(NETKEY);}catch(e){}if(!raw){try{raw=localStorage.getItem(NETKEY);}catch(e){}}try{const x=JSON.parse(raw||'null');return x&&x.code?x:null;}catch(e){return null;}}
+function clearNet(){try{sessionStorage.removeItem(NETKEY);}catch(e){}try{localStorage.removeItem(NETKEY);}catch(e){}}
+function setConn(t){$('#connNote').textContent=t;}
+function cleanShots(a){if(!Array.isArray(a))return [];const s=new Set(),o=[];for(const x of a){if(Number.isInteger(x)&&x>=0&&x<100&&!s.has(x)){s.add(x);o.push(x);}}return o;}
+function oppState(){const pr=oppPresence;if(!pr||pr.v!==1||pr.seat!==3-NET.seat)return null;
+  const ans=typeof pr.ans==='string'&&pr.ans.length===100?pr.ans:'.'.repeat(100);
+  const dead=Array.isArray(pr.dead)?pr.dead.filter(x=>Array.isArray(x)&&Number.isInteger(x[0])&&Number.isInteger(x[1])&&x[1]>=0&&x[1]<4).map(x=>planeCells(x[0],x[1])).filter(Boolean):[];
+  const reveal=Array.isArray(pr.reveal)?pr.reveal.filter(x=>Array.isArray(x)&&Number.isInteger(x[0])&&Number.isInteger(x[1])).map(x=>planeCells(x[0],x[1])).filter(Boolean):[];
+  return {nick:typeof pr.nick==='string'&&pr.nick.trim()?pr.nick.slice(0,16):'Өрсөлдөгч',ready:pr.ready===true,shots:cleanShots(pr.shots),ans,dead,reveal,online:oppOnline};}
+function myAns(oppShots){const a=new Array(100).fill('.');oppShots.forEach(c=>a[c]=answer(NET.planes,c));return a.join('');}
+function netOutcome(o){if(!o)return 0;const myK=NET.shots.filter(c=>o.ans[c]==='k').length;const opK=(myAns(o.shots).match(/k/g)||[]).length;
+  return myK>=3?1:(opK>=3?-1:0);}
+function pushPresence(){const o=oppState();const oShots=o?o.shots:[];
+  const dead=NET.planes.filter(p=>oShots.includes(p.h)).map(p=>[p.h,p.d]);
+  const over=netOutcome(o)!==0;
+  const p={v:1,seat:NET.seat,nick:NET.nick,ready:NET.ready,shots:NET.shots,ans:myAns(oShots),dead,reveal:over?NET.planes.map(x=>[x.h,x.d]):null};
+  const s=JSON.stringify(p);if(s===lastPushed)return;
+  if(conn&&conn.open){try{conn.send(p);lastPushed=s;}catch(e){}}}
+function netTurn(o){if(!o||!o.online||!NET.ready||!o.ready)return false;if(netOutcome(o)!==0)return false;
+  if(NET.shots.some(c=>o.ans[c]==='.'))return false;
+  return NET.seat===1?NET.shots.length===o.shots.length:NET.shots.length<o.shots.length;}
+function netShoot(c){const o=oppState();if(!netTurn(o)||NET.shots.includes(c))return;NET.shots.push(c);saveNet();pushPresence();renderNet();}
+function vmNet(){const o=oppState();const oShots=o?o.shots:[];const ansMe=myAns(oShots);
+  const enemy={};NET.shots.forEach(c=>{const r=o?o.ans[c]:'.';enemy[c]=(r==='m'||r==='h'||r==='k')?r:'p';});
+  const mine={};oShots.forEach(c=>mine[c]=ansMe[c]);
+  const out=netOutcome(o),turn=netTurn(o);
+  const oname=o?o.nick:'Өрсөлдөгч';
+  let big,small='',cls='';
+  if(out===1){big='Та яллаа!';small='Өрсөлдөгчийн 3 онгоц бүгд унав.';cls='win';}
+  else if(out===-1){big=oname+' яллаа';small='Таны 3 онгоц бүгд унав.';cls='lose';}
+  else if(!o){big='Өрсөлдөгч холбогдоогүй';small='Холбогдохыг хүлээж байна. Код: '+NET.code.toUpperCase();}
+  else if(!o.online){big='Өрсөлдөгч саллаа';small='Буцаж холбогдохыг хүлээж байна… Код: '+NET.code.toUpperCase();}
+  else if(turn){big='Таны ээлж';small='Дайсны талбайгаас нэг нүд сонгоно уу.';cls='your';}
+  else if(NET.shots.some(c=>o.ans[c]==='.')){big='Хариу хүлээж байна…';}
+  else{big=oname+'-ийн ээлж';small='Өрсөлдөгч буудаж байна…';}
+  const log=[];const first=NET.seat===1?[NET.shots,'Та']:[oShots,oname],second=NET.seat===1?[oShots,oname]:[NET.shots,'Та'];
+  const n=Math.max(NET.shots.length,oShots.length);
+  for(let k=0;k<n;k++){for(const [arr,who] of [first,second]){const c=arr[k];if(c===undefined)continue;const mineShot=arr===NET.shots;const r=mineShot?enemy[c]:mine[c];log.push({who,c,r,mineShot});}}
+  let last=null;if(log.length){const e=log[log.length-1];last={c:e.c,mine:e.mineShot};}
+  return {enemy,mine,dead:o?o.dead:[],reveal:out!==0&&o?o.reveal:[],myPlanes:NET.planes,canShoot:turn,big,small,cls,
+    myKills:NET.shots.filter(c=>enemy[c]==='k').length,oppKills:(ansMe.match(/k/g)||[]).length,meName:'Та',opName:oname,
+    enemyTitle:oname+'-ийн талбай',myTitle:'Миний талбай',last,log,over:out!==0};}
+function renderNet(){if(!NET.on)return;const o=oppState();
+  if(NET.ready&&o&&o.ready){if($('#play').hidden)show('play');renderPlay();return;}
+  if($('#setup').hidden)show('setup');
+  S.locked=NET.ready;renderSetup();
+  $('#codeShow').textContent=NET.code.toUpperCase();
+  const pill=$('#oppPill');
+  if(!o){pill.className='pill';pill.textContent='Хүлээж байна…';}
+  else if(!o.online){pill.className='pill warn';pill.textContent=o.nick+' · саллаа';}
+  else{pill.className='pill ok';pill.textContent=o.nick+(o.ready?' · бэлэн':' · байрлуулж байна');}
+  if(NET.ready)$('#setupTitle').textContent=o&&!o.ready?'Өрсөлдөгчийг хүлээж байна…':'Бэлэн боллоо';
+}
+function genCode(){const a='abcdefghjkmnpqrstuvwxyz23456789';let s='';for(let i=0;i<4;i++)s+=a[Math.floor(Math.random()*a.length)];return s;}
+
+function attach(c){conn=c;
+  c.on('open',()=>{if(c!==conn)return;oppOnline=true;setConn('');lastPushed='';pushPresence();renderNet();});
+  c.on('data',d=>{if(c!==conn)return;if(d&&typeof d==='object'&&d.v===1){oppPresence=d;oppOnline=true;pushPresence();renderNet();}});
+  c.on('close',()=>{if(c!==conn)return;conn=null;oppOnline=false;renderNet();
+    setConn(NET.seat===1?'Өрсөлдөгч саллаа. Буцаж холбогдохыг хүлээж байна…':'Холболт тасарлаа. Дахин холбогдож байна…');
+    if(NET.seat===2)retryDial(3000);});
+  c.on('error',()=>{});}
+function dial(){if(!NET.on||!peer||peer.destroyed)return;attach(peer.connect(PREFIX+NET.code,{reliable:true}));}
+function retryPeer(ms){clearTimeout(retryT);retryT=setTimeout(()=>{if(!NET.on)return;try{peer&&peer.destroy();}catch(e){}peer=null;connectNet();},ms);}
+function retryDial(ms){clearTimeout(retryT);retryT=setTimeout(()=>{if(NET.on&&!(conn&&conn.open))dial();},ms);}
+function connectNet(){if(!NET.on)return;
+  setConn('Сервертэй холбогдож байна…');
+  const p=NET.seat===1?new Peer(PREFIX+NET.code):new Peer();peer=p;
+  p.on('open',()=>{if(p!==peer)return;if(NET.seat===1){if(!(conn&&conn.open))setConn('Өрсөлдөгчөө хүлээж байна…');}else{setConn('Тоглоомд нэгдэж байна…');dial();}});
+  p.on('connection',c=>{if(p!==peer||NET.seat!==1){try{c.close();}catch(e){}return;}
+    if(conn&&conn!==c){try{conn.close();}catch(e){}}attach(c);});
+  p.on('error',err=>{if(p!==peer)return;const t=err&&err.type;
+    if(t==='unavailable-id'){setConn('Энэ кодыг сервер одоохондоо чөлөөлөөгүй байна. Дахин оролдож байна…');retryPeer(5000);}
+    else if(t==='peer-unavailable'){setConn('Ийм кодтой тоглоом олдсонгүй. Үүсгэсэн хүн хуудсаа нээлттэй байлгах ёстой. Дахин оролдож байна…');retryDial(4000);}
+    else if(t==='network'||t==='server-error'||t==='socket-error'||t==='socket-closed'||t==='disconnected'){setConn('Интернэт холболтоо шалгана уу. Дахин оролдож байна…');retryPeer(5000);}
+    else{setConn('Холболтын алдаа ('+t+'). Дахин оролдож байна…');retryPeer(5000);}});
+  p.on('disconnected',()=>{if(p===peer&&NET.on&&!p.destroyed){try{p.reconnect();}catch(e){}}});
+}
+function startNet(saved){
+  if(!netAvailable)return;G=null;
+  Object.assign(NET,{on:true,code:saved.code,seat:saved.seat,nick:saved.nick,planes:saved.planes||[],shots:saved.shots||[],ready:!!saved.ready});
+  lastPushed='';oppPresence=null;oppOnline=false;saveNet();
+  startSetup({title:'Онгоцоо байрлуул',net:true,planes:NET.planes,done:()=>{NET.ready=true;saveNet();pushPresence();renderNet();}});
+  S.onChange=()=>{saveNet();pushPresence();};
+  connectNet();renderNet();
+}
+function stopNet(){if(!NET.on)return;NET.on=false;clearTimeout(retryT);
+  try{conn&&conn.close();}catch(e){}try{peer&&peer.destroy();}catch(e){}
+  conn=null;peer=null;oppPresence=null;oppOnline=false;}
+function leaveNet(forget){stopNet();if(forget)clearNet();}
+window.addEventListener('pagehide',()=>{try{peer&&peer.destroy();}catch(e){}});
+
+function nickVal(){const v=$('#nick').value.trim().slice(0,16);try{localStorage.setItem('plane-battle-nick',v);}catch(e){}return v||'Тоглогч';}
+
+$('#createBtn').onclick=()=>{if(!netAvailable)return;leaveNet(true);startNet({code:genCode(),seat:1,nick:nickVal(),planes:[],shots:[],ready:false});};
+$('#joinBtn').onclick=()=>{if(!netAvailable)return;
+  const map={'А':'a','В':'b','Е':'e','К':'k','М':'m','Н':'h','О':'o','Р':'p','С':'c','Т':'t','У':'y','Х':'x'};
+  let code=$('#joinCode').value.trim().toUpperCase().split('').map(ch=>map[ch]||ch).join('').toLowerCase();
+  if(!/^[a-z0-9]{4}$/.test(code)){$('#netNote').textContent='4 тэмдэгттэй кодоо зөв оруулна уу.';return;}
+  const saved=loadNet();
+  if(saved&&saved.code===code&&saved.seat===2){startNet(saved);return;}
+  leaveNet(false);startNet({code,seat:2,nick:nickVal(),planes:[],shots:[],ready:false});};
+$('#joinCode').addEventListener('keydown',e=>{if(e.key==='Enter')$('#joinBtn').click();});
+$('#resumeBtn').onclick=()=>{const s=loadNet();if(s)startNet(s);};
+$('#hotBtn').onclick=startHot;
+$('#aiBtn').onclick=startAI;
+$('#homeBtn').onclick=()=>{stopNet();G=null;$('#curtain').hidden=true;show('home');refreshHome();};
+
+function refreshHome(){
+  const s=loadNet();const rb=$('#resumeBtn');
+  rb.hidden=!(s&&netAvailable);if(s)rb.textContent='Үргэлжлүүлэх (код '+s.code.toUpperCase()+')';
+  ['createBtn','joinBtn','joinCode','nick'].forEach(id=>$('#'+id).disabled=netAvailable!==true);
+  $('#netNote').textContent=netAvailable===null?'Холболт шалгаж байна…':
+    netAvailable?'Тоглоом үүсгэсэн хүн хуудсаа хаалгүй нээлттэй байлгана. Хоёулаа интернэттэй байхад л болно.':
+    'Онлайн холболтын сан ачаалагдсангүй. Интернэтээ шалгаад хуудсыг дахин ачаална уу. Доорх 2 горимоор тоглох боломжтой.';
+}
+try{const n=localStorage.getItem('plane-battle-nick');if(n)$('#nick').value=n;}catch(e){}
+refreshHome();
+netAvailable=typeof Peer==='function';refreshHome();
+})();
+</script>
+</body>
+</html>
